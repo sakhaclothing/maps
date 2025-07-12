@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Maps - Sakha Clothing</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #ccc;
+            margin: 20px 0;
+        }
+        .debug-info {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Maps Sakha Clothing</h1>
+        
+        <div class="debug-info">
+            <h3>🔍 Debug Information</h3>
+            <div id="api-status" class="status warning">Checking API status...</div>
+            <div id="map-status" class="status warning">Checking map status...</div>
+            <div id="error-log" class="status warning">No errors yet...</div>
+        </div>
+        
+        <div class="debug-info">
+            <h3>🎮 Test Controls</h3>
+            <button onclick="testAPI()">Test API Connection</button>
+            <button onclick="initTestMap()">Initialize Test Map</button>
+            <button onclick="checkMapStatus()">Check Map Status</button>
+            <button onclick="clearLog()">Clear Log</button>
+        </div>
+        
+        <div class="map-container" id="test-map">
+            <div style="text-align: center; padding-top: 180px; color: #666;">
+                Map will appear here...
+            </div>
+        </div>
+        
+        <div class="debug-info">
+            <h3>📋 Console Log</h3>
+            <div id="console-log" style="background: #000; color: #0f0; padding: 10px; border-radius: 5px; font-family: monospace; height: 200px; overflow-y: auto;">
+                Console output will appear here...
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUpOIjei-UsvnURvYYfLU9k3XOIcOc71A&libraries=places"></script>
+    
+    <script>
+        let testMap;
+        let testMarker;
+        
+        // Override console.log to capture output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        
+        function addToLog(message, type = 'log') {
+            const logDiv = document.getElementById('console-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const color = type === 'error' ? '#ff6b6b' : type === 'warn' ? '#ffd93d' : '#6bcf7f';
+            logDiv.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToLog(args.join(' '), 'warn');
+        };
+        
+        // Test API connection
+        function testAPI() {
+            console.log('Testing Google Maps API connection...');
+            
+            const apiStatus = document.getElementById('api-status');
+            
+            if (typeof google !== 'undefined' && google.maps) {
+                apiStatus.className = 'status success';
+                apiStatus.textContent = '✅ Google Maps API loaded successfully';
+                console.log('Google Maps API is available');
+            } else {
+                apiStatus.className = 'status error';
+                apiStatus.textContent = '❌ Google Maps API not loaded';
+                console.error('Google Maps API not available');
+            }
+        }
+        
+        // Initialize test map
+        function initTestMap() {
+            console.log('Initializing test map...');
+            
+            const mapStatus = document.getElementById('map-status');
+            
+            try {
+                if (typeof google === 'undefined' || !google.maps) {
+                    throw new Error('Google Maps API not loaded');
+                }
+                
+                const sakhaLocation = {
+                    lat: -6.544797393420786,
+                    lng: 107.73572921083975
+                };
+                
+                testMap = new google.maps.Map(document.getElementById('test-map'), {
+                    center: sakhaLocation,
+                    zoom: 16,
+                    mapTypeControl: true,
+                    streetViewControl: true,
+                    fullscreenControl: true
+                });
+                
+                testMarker = new google.maps.Marker({
+                    position: sakhaLocation,
+                    map: testMap,
+                    title: 'Sakha Clothing Test',
+                    animation: google.maps.Animation.DROP
+                });
+                
+                const infoWindow = new google.maps.InfoWindow({
+                    content: '<div><h3>Sakha Clothing</h3><p>Test location</p></div>'
+                });
+                
+                testMarker.addListener('click', function() {
+                    infoWindow.open(testMap, testMarker);
+                });
+                
+                mapStatus.className = 'status success';
+                mapStatus.textContent = '✅ Test map initialized successfully';
+                console.log('Test map created successfully');
+                
+            } catch (error) {
+                mapStatus.className = 'status error';
+                mapStatus.textContent = '❌ Error initializing test map: ' + error.message;
+                console.error('Error creating test map:', error);
+            }
+        }
+        
+        // Check map status
+        function checkMapStatus() {
+            console.log('Checking map status...');
+            console.log('Google Maps API loaded:', typeof google !== 'undefined' && google.maps);
+            console.log('Test map object:', testMap);
+            console.log('Test marker object:', testMarker);
+        }
+        
+        // Clear log
+        function clearLog() {
+            document.getElementById('console-log').innerHTML = 'Console output cleared...';
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', function() {
+            console.log('Page loaded, starting auto-test...');
+            setTimeout(testAPI, 1000);
+            setTimeout(initTestMap, 2000);
+        });
+        
+        // Check for errors
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            document.getElementById('error-log').className = 'status error';
+            document.getElementById('error-log').textContent = '❌ Error: ' + e.error.message;
+        });
+    </script>
+</body>
+</html> 

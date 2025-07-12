@@ -4,31 +4,86 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find us here!</title>
+    <title>Find us here! - Sakha Clothing</title>
 
     <!--link to css-->
     <link rel="stylesheet" href="syle.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCUpOIjei-UsvnURvYYfLU9k3XOIcOc71A&libraries=places"></script>
 </head>
 <body>
     <section>
         <div class="contact-container">
             <div class="form-container">
-                <h3>Kirim pesan disini!</h3>
-                <form action="" class="contact-form">
-                    <input type="text" placeholder="your name" required>
-                    <input type="email" name="" id="" placeholder="enter your email..." required>
-                    <textarea name="" id="" cols="30" rows="10" placeholder="tulis pesan disini...." required></textarea>
-                    <input type="submit" value="send" class="send-button">
+                <h3><i class="fas fa-envelope"></i> Kirim pesan disini!</h3>
+                <form action="" class="contact-form" id="contactForm">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" placeholder="Your name" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" placeholder="Enter your email..." required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-comment"></i>
+                        <textarea cols="30" rows="10" placeholder="Tulis pesan disini...." required></textarea>
+                    </div>
+                    <button type="submit" class="send-button">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Send Message</span>
+                    </button>
                 </form>
             </div>
-            <div class="map">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.816844730202!2d107.73572921083975!3d-6.544797393420786!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e693dca3d4217b1%3A0x67d48a54ade65e46!2sSakha%20Clothing!5e0!3m2!1sid!2sid!4v1732321920106!5m2!1sid!2sid" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            
+            <div class="map-container">
+                <div class="map-header">
+                    <h3><i class="fas fa-map-marker-alt"></i> Lokasi Kami</h3>
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="Cari lokasi...">
+                        <button id="searchBtn"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                
+                <div class="map" id="map">
+                    <!-- Google Maps will be loaded here -->
+                </div>
+                
+                <div class="location-info">
+                    <div class="info-card">
+                        <i class="fas fa-store"></i>
+                        <div>
+                            <h4>Sakha Clothing</h4>
+                            <p>Jl. Raya Ciputat No.123, Tangerang Selatan</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Jam Operasional</h4>
+                            <p>Senin - Minggu: 09:00 - 21:00</p>
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Hubungi Kami</h4>
+                            <p>+62 812-3456-7890</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
     
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>

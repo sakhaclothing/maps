@@ -88,12 +88,12 @@ function createCustomMarker() {
     try {
         const markerIcon = {
             url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" fill="#00d4ff" stroke="#fff" stroke-width="2"/>
-                    <circle cx="20" cy="20" r="8" fill="#fff"/>
-                    <circle cx="20" cy="20" r="4" fill="#00d4ff"/>
-                </svg>
-            `),
+            <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" fill="#000000" stroke="#fff" stroke-width="2"/>
+                <circle cx="20" cy="20" r="8" fill="#fff"/>
+                <circle cx="20" cy="20" r="4" fill="#000000"/>
+            </svg>
+        `),
             scaledSize: new google.maps.Size(40, 40),
             anchor: new google.maps.Point(20, 20)
         };
@@ -532,12 +532,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Simple validation
             if (!name || !email || !message) {
-                alert('Mohon lengkapi semua field!');
+                alert('Please complete all fields!');
                 return;
             }
 
             // Show success message
-            showNotification('Pesan berhasil dikirim! Kami akan segera menghubungi Anda.', 'success');
+            showNotification('Message sent successfully! We will contact you soon.', 'success');
 
             // Reset form
             contactForm.reset();
@@ -553,6 +553,25 @@ document.addEventListener('DOMContentLoaded', function () {
             showFallbackMap();
         }
     }, 3000);
+
+    // Add scroll reveal animation
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('show');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all elements with scroll-reveal class
+    document.querySelectorAll('.scroll-reveal').forEach(el => {
+        observer.observe(el);
+    });
 });
 
 // Show notification
@@ -651,12 +670,12 @@ style.textContent = `
     }
     
     .direction-btn {
-        background: #00d4ff;
+        background: #000000;
         color: white;
     }
     
     .call-btn {
-        background: #4CAF50;
+        background: #28a745;
         color: white;
     }
     

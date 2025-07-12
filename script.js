@@ -6,8 +6,8 @@ let searchBox;
 
 // Sakha Clothing location coordinates
 const SAKHA_LOCATION = {
-    lat: -6.544797393420786,
-    lng: 107.73572921083975
+    lat: -6.544764613751721,
+    lng: 107.73831818269235
 };
 
 // Check if Google Maps API is loaded
@@ -130,7 +130,7 @@ function createInfoWindow() {
                     <h3><i class="fas fa-store"></i> Sakha Clothing</h3>
                 </div>
                 <div class="info-content">
-                    <p><i class="fas fa-map-marker-alt"></i> Jl. Raya Ciputat No.123, Tangerang Selatan</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Koordinat: -6.544764613751721, 107.73831818269235</p>
                     <p><i class="fas fa-clock"></i> Senin - Minggu: 09:00 - 21:00</p>
                     <p><i class="fas fa-phone"></i> +62 812-3456-7890</p>
                     <div class="info-actions">

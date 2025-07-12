@@ -272,14 +272,14 @@ console.log("Map element:", document.getElementById("map"));
 
 // Test 3: Check coordinates
 console.log("Sakha coordinates:", {
-  lat: -6.544797393420786,
-  lng: 107.73572921083975,
+  lat: -6.544764613751721,
+  lng: 107.73831818269235,
 });
 
 // Test 4: Create simple map
 if (typeof google !== "undefined" && google.maps) {
   const testMap = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: -6.544797393420786, lng: 107.73572921083975 },
+    center: { lat: -6.544764613751721, lng: 107.73831818269235 },
     zoom: 16,
   });
   console.log("Test map created:", testMap);

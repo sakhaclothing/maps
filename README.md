@@ -54,8 +54,8 @@ Edit koordinat Sakha Clothing di `script.js`:
 
 ```javascript
 const SAKHA_LOCATION = {
-  lat: -6.544797393420786, // Latitude
-  lng: 107.73572921083975, // Longitude
+  lat: -6.544764613751721, // Latitude
+  lng: 107.73831818269235, // Longitude
 };
 ```
 

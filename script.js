@@ -1,4 +1,18 @@
-// Google Maps API Configuration
+// JSCROOT Library Usage Examples for Maps
+// ======================================
+
+// Wait for jscroot to be ready
+function waitForJscroot() {
+    return new Promise((resolve) => {
+        if (window.jscroot) {
+            resolve();
+        } else {
+            document.addEventListener('jscroot-ready', resolve);
+        }
+    });
+}
+
+// Google Maps API Configuration with JSCROOT Integration
 let map;
 let marker;
 let infoWindow;
@@ -10,13 +24,132 @@ const SAKHA_LOCATION = {
     lng: 107.73831818269235
 };
 
+// Example 1: Form handling using jscroot
+async function handleContactFormWithJscroot() {
+    await waitForJscroot();
+
+    const contactForm = window.jscroot.getElement('contactForm');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Get form data using jscroot
+            const name = window.jscroot.getValue('name').trim();
+            const email = window.jscroot.getValue('email').trim();
+            const message = window.jscroot.getValue('message').trim();
+
+            // Validate form
+            if (!name || name.trim() === '') {
+                showNotification('Nama wajib diisi.', 'error');
+                return;
+            }
+
+            if (!email || email.trim() === '') {
+                showNotification('Email wajib diisi.', 'error');
+                return;
+            }
+
+            // Validate email format
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                showNotification('Format email tidak valid.', 'error');
+                return;
+            }
+
+            if (!message || message.trim() === '') {
+                showNotification('Pesan wajib diisi.', 'error');
+                return;
+            }
+
+            try {
+                // Show loading
+                const loadingElement = document.createElement('div');
+                loadingElement.innerHTML = window.jscroot.loading;
+                loadingElement.style.position = 'fixed';
+                loadingElement.style.top = '50%';
+                loadingElement.style.left = '50%';
+                loadingElement.style.transform = 'translate(-50%, -50%)';
+                loadingElement.style.zIndex = '9999';
+                document.body.appendChild(loadingElement);
+
+                // Use jscroot API to send contact form
+                const response = await new Promise((resolve) => {
+                    window.jscroot.postJSON(
+                        'https://asia-southeast2-ornate-course-437014-u9.cloudfunctions.net/sakha/contact',
+                        { name, email, message },
+                        resolve
+                    );
+                });
+
+                document.body.removeChild(loadingElement);
+
+                if (response.status === 200) {
+                    showNotification('Pesan berhasil dikirim! Kami akan menghubungi Anda segera.', 'success');
+                    contactForm.reset();
+
+                    // Set cookie to track contact submission
+                    window.jscroot.setCookieWithExpireHour('contact_submitted', 'true', 24);
+
+                } else {
+                    throw new Error(response.data.error || 'Gagal mengirim pesan');
+                }
+            } catch (error) {
+                if (document.body.contains(loadingElement)) {
+                    document.body.removeChild(loadingElement);
+                }
+                showNotification(error.message || 'Terjadi kesalahan. Silakan coba lagi.', 'error');
+            }
+        });
+    }
+}
+
+// Example 2: URL parameter handling
+async function handleMapUrlParameters() {
+    await waitForJscroot();
+
+    const queryString = window.jscroot.getQueryString();
+    const lat = queryString.lat;
+    const lng = queryString.lng;
+    const zoom = queryString.zoom;
+
+    if (lat && lng) {
+        console.log('Map coordinates from URL:', { lat, lng });
+        // Could center map on these coordinates
+    }
+
+    if (zoom) {
+        console.log('Map zoom from URL:', zoom);
+        // Could set map zoom level
+    }
+}
+
+// Example 3: Cookie management for user preferences
+async function loadMapPreferences() {
+    await waitForJscroot();
+
+    const lastVisited = window.jscroot.getCookie('map_last_visited');
+    const isMobile = window.jscroot.isMobile();
+
+    if (lastVisited) {
+        console.log('User last visited map on:', lastVisited);
+    }
+
+    if (isMobile) {
+        // Adjust map controls for mobile
+        console.log('Mobile device detected, adjusting map controls');
+    }
+}
+
 // Check if Google Maps API is loaded
 function isGoogleMapsLoaded() {
     return typeof google !== 'undefined' && google.maps;
 }
 
 // Initialize the map when the page loads
-function initMap() {
+async function initMap() {
+    await waitForJscroot();
+
     console.log('Initializing map...');
 
     // Check if Google Maps API is available
@@ -28,13 +161,13 @@ function initMap() {
 
     try {
         // Hide fallback iframe
-        const fallbackMap = document.getElementById('fallback-map');
+        const fallbackMap = window.jscroot.getElement('fallback-map');
         if (fallbackMap) {
             fallbackMap.style.display = 'none';
         }
 
         // Create map instance
-        map = new google.maps.Map(document.getElementById('map'), {
+        map = new google.maps.Map(window.jscroot.getElement('map'), {
             center: SAKHA_LOCATION,
             zoom: 16,
             styles: getCustomMapStyle(),
@@ -75,9 +208,11 @@ function initMap() {
 }
 
 // Show fallback iframe map
-function showFallbackMap() {
+async function showFallbackMap() {
+    await waitForJscroot();
+
     console.log('Showing fallback map');
-    const fallbackMap = document.getElementById('fallback-map');
+    const fallbackMap = window.jscroot.getElement('fallback-map');
     if (fallbackMap) {
         fallbackMap.style.display = 'block';
     }
@@ -105,18 +240,15 @@ function createCustomMarker() {
             animation: google.maps.Animation.DROP
         });
 
-        // Add bounce animation on click
+        // Add click event to marker
         marker.addListener('click', function () {
-            marker.setAnimation(google.maps.Animation.BOUNCE);
-            setTimeout(() => {
-                marker.setAnimation(null);
-            }, 750);
             infoWindow.open(map, marker);
         });
 
-        console.log('Marker created successfully');
+        console.log('Custom marker created successfully');
+
     } catch (error) {
-        console.error('Error creating marker:', error);
+        console.error('Error creating custom marker:', error);
     }
 }
 
@@ -158,8 +290,8 @@ function createInfoWindow() {
 // Initialize search functionality
 function initializeSearch() {
     try {
-        const searchInput = document.getElementById('searchInput');
-        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = window.jscroot.getElement('searchInput');
+        const searchBtn = window.jscroot.getElement('searchBtn');
 
         if (!searchInput || !searchBtn) {
             console.warn('Search elements not found');
@@ -251,7 +383,7 @@ function initializeSearch() {
 // Perform search
 function performSearch() {
     try {
-        const searchInput = document.getElementById('searchInput');
+        const searchInput = window.jscroot.getElement('searchInput');
         if (searchInput && searchInput.value.trim()) {
             const geocoder = new google.maps.Geocoder();
             geocoder.geocode({ address: searchInput.value }, function (results, status) {
@@ -514,63 +646,33 @@ function getCustomMapStyle() {
 }
 
 // Form handling
-document.addEventListener('DOMContentLoaded', function () {
-    console.log('DOM loaded, setting up form...');
+// Initialize jscroot features
+async function initializeJscrootFeatures() {
+    await waitForJscroot();
 
-    const contactForm = document.getElementById('contactForm');
+    // Handle contact form with jscroot
+    await handleContactFormWithJscroot();
 
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+    // Handle URL parameters
+    await handleMapUrlParameters();
 
-            // Get form data
-            const formData = new FormData(contactForm);
-            const name = contactForm.querySelector('input[type="text"]').value;
-            const email = contactForm.querySelector('input[type="email"]').value;
-            const message = contactForm.querySelector('textarea').value;
+    // Load user preferences
+    await loadMapPreferences();
 
-            // Simple validation
-            if (!name || !email || !message) {
-                alert('Please complete all fields!');
-                return;
-            }
+    // Log browser information
+    console.log('Maps Is Mobile:', window.jscroot.isMobile());
 
-            // Show success message
-            showNotification('Message sent successfully! We will contact you soon.', 'success');
+    // Initialize map
+    await initMap();
+}
 
-            // Reset form
-            contactForm.reset();
-        });
-
-        console.log('Form setup complete');
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        await initializeJscrootFeatures();
+    } catch (error) {
+        console.error('Error initializing maps:', error);
     }
-
-    // Check if Google Maps API is loaded after DOM is ready
-    setTimeout(() => {
-        if (!isGoogleMapsLoaded()) {
-            console.warn('Google Maps API not loaded after timeout, showing fallback');
-            showFallbackMap();
-        }
-    }, 3000);
-
-    // Add scroll reveal animation
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('show');
-            }
-        });
-    }, observerOptions);
-
-    // Observe all elements with scroll-reveal class
-    document.querySelectorAll('.scroll-reveal').forEach(el => {
-        observer.observe(el);
-    });
 });
 
 // Show notification
